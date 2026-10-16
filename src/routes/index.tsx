@@ -10,7 +10,6 @@ import {
   ArrowRight,
   Phone,
 } from "lucide-react";
-import hero from "@/assets/hero.jpg";
 import { Button } from "@/components/ui/button";
 import { VehicleCard } from "@/components/site/VehicleCard";
 import { VehicleImage } from "@/components/site/VehicleImage";
@@ -18,7 +17,7 @@ import { SectionHeading } from "@/components/site/Section";
 import { JsonLd } from "@/components/site/PageHeader";
 import { STEPS } from "@/lib/process";
 import { selectCls } from "@/components/site/InventoryControls";
-import { locationLabel } from "@/lib/inventory";
+import { locationLabel, vehicleName, vehicleTitle } from "@/lib/inventory";
 import { BUSINESS, SITE_URL, addressLines } from "@/lib/business";
 import { seo } from "@/lib/seo";
 import { Route as RootRoute } from "./__root";
@@ -69,6 +68,8 @@ function Home() {
   const s = RootRoute.useLoaderData();
   const nav = useNavigate();
   const [q, setQ] = useState({ make: "", model: "", body: "", minYear: "", loc: "" });
+  // Real listing photos: the newest vehicles with a registration year and several photos.
+  const heroCars = s.featured.filter((v) => v.year != null && v.images.length > 1).slice(0, 3);
   const models = q.make ? (s.modelsByMake[q.make] ?? []) : [];
 
   return (
@@ -77,42 +78,84 @@ function Home() {
 
       {/* Hero */}
       <section className="relative isolate overflow-hidden bg-graphite">
-        <img
-          src={hero}
-          alt=""
-          width={1920}
-          height={1088}
-          fetchPriority="high"
-          className="absolute inset-0 -z-10 h-full w-full object-cover object-[70%_center]"
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_right,oklch(0.43_0.15_22/0.35),transparent_60%)]"
         />
-        <div className="absolute inset-0 -z-10 bg-hero-overlay" />
-        <div className="container-page pb-28 pt-16 md:pb-36 md:pt-24">
-          <p className="eyebrow !text-graphite-foreground/80">
-            Japanese vehicle imports · Since {BUSINESS.established}
-          </p>
-          <h1 className="mt-3 max-w-2xl text-4xl font-extrabold leading-[1.08] text-graphite-foreground md:text-[56px]">
-            Find your next vehicle with confidence.
-          </h1>
-          <p className="mt-5 max-w-xl text-lg leading-relaxed text-graphite-foreground/85">
-            Explore Japanese vehicles with Canon Motors and get professional assistance throughout
-            your vehicle-buying journey.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Button asChild size="lg">
-              <Link to="/vehicles">
-                Browse vehicles <ArrowRight />
-              </Link>
-            </Button>
-            <Button asChild size="lg" variant="onDark">
-              <Link to="/contact" hash="enquire">
-                Talk to our team
-              </Link>
-            </Button>
+        <div className="container-page grid items-center gap-10 pb-28 pt-14 md:pb-36 md:pt-20 lg:grid-cols-[1.05fr_1fr]">
+          <div>
+            <p className="eyebrow !text-graphite-foreground/80">
+              Japanese vehicle imports · Mombasa · Since {BUSINESS.established}
+            </p>
+            <h1 className="mt-3 max-w-2xl text-4xl font-extrabold leading-[1.08] text-graphite-foreground md:text-[54px]">
+              Find your next vehicle with confidence.
+            </h1>
+            <p className="mt-5 max-w-xl text-lg leading-relaxed text-graphite-foreground/85">
+              Explore Japanese vehicles with Canon Motors and get professional assistance throughout
+              your vehicle-buying journey.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Button asChild size="lg">
+                <Link to="/vehicles">
+                  Browse vehicles <ArrowRight />
+                </Link>
+              </Button>
+              <Button asChild size="lg" variant="onDark">
+                <Link to="/contact" hash="enquire">
+                  Talk to our team
+                </Link>
+              </Button>
+            </div>
+            <dl className="mt-10 grid max-w-md grid-cols-3 gap-4 border-t border-graphite-foreground/15 pt-6">
+              {[
+                [String(s.total), "Vehicles listed"],
+                [String(s.makes.length), "Makes"],
+                [String(BUSINESS.established), "Established"],
+              ].map(([v, k]) => (
+                <div key={k}>
+                  <dt className="text-xs text-graphite-muted">{k}</dt>
+                  <dd className="text-2xl font-extrabold text-graphite-foreground">{v}</dd>
+                </div>
+              ))}
+            </dl>
           </div>
+
+          {heroCars.length >= 3 && (
+            <div className="grid grid-cols-2 gap-3" aria-label="Recently added vehicles">
+              {heroCars.map((v, i) => (
+                <Link
+                  key={v.id}
+                  to="/vehicles/$id"
+                  params={{ id: String(v.id) }}
+                  className={`group relative overflow-hidden rounded-xl ring-1 ring-graphite-foreground/10 ${i === 0 ? "col-span-2" : "hidden sm:block"}`}
+                >
+                  <VehicleImage
+                    src={v.image}
+                    alt={`${vehicleTitle(v)} — Ref ${v.stockNo}`}
+                    priority
+                    sizes={
+                      i === 0
+                        ? "(min-width: 1024px) 560px, 90vw"
+                        : "(min-width: 1024px) 280px, 45vw"
+                    }
+                    className="transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transform-none"
+                  />
+                  <span className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-black/75 to-transparent px-3 pb-2.5 pt-8 text-white">
+                    <span className="min-w-0">
+                      <span className="block truncate text-sm font-bold">{vehicleName(v)}</span>
+                      <span className="block text-[11px] text-white/80">
+                        {[v.year, v.grade].filter(Boolean).join(" · ")}
+                      </span>
+                    </span>
+                    <span className="shrink-0 rounded-full bg-white/15 px-2 py-0.5 text-[11px] font-semibold backdrop-blur">
+                      {v.stockNo}
+                    </span>
+                  </span>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
-        <span className="absolute right-3 top-2 text-[10px] text-graphite-foreground/60">
-          Illustrative image
-        </span>
       </section>
 
       {/* Search panel */}

@@ -11,9 +11,26 @@ import type { Vehicle } from "@/lib/inventory";
  */
 type RawVehicle = Omit<Vehicle, "images"> & { images?: string[] };
 
+/**
+ * The source lists model names in capitals ("MAZDA CX-8"); the snapshot was
+ * title-cased, which mangles acronyms. Restore manufacturers' styling per word.
+ */
+const MODEL_WORDS: Record<string, string> = {
+  xv: "XV",
+  rav4: "RAV4",
+  rvr: "RVR",
+  nv200: "NV200",
+  miraes: "Mira e:S",
+};
+export const styleModel = (model: string) =>
+  model
+    .split(" ")
+    .map((w) => MODEL_WORDS[w.toLowerCase()] ?? (/^cx-\d+$/i.test(w) ? w.toUpperCase() : w))
+    .join(" ");
+
 const normalise = (v: RawVehicle): Vehicle => {
   const images = (v.images?.length ? v.images : [v.image]).filter(Boolean);
-  return { ...v, image: images[0] ?? v.image, images };
+  return { ...v, model: styleModel(v.model), image: images[0] ?? v.image, images };
 };
 
 let cache: Vehicle[] | undefined;

@@ -32,21 +32,24 @@ const NAV = [
   { to: "/contact", label: "Contact" },
 ] as const;
 
-export function Logo({ dark = false, compact = false }: { dark?: boolean; compact?: boolean }) {
+/**
+ * Official Canon Motors logo (from canonmotors.com). The artwork is drawn for
+ * light backgrounds, so on dark surfaces it sits on a white plate.
+ */
+export function Logo({ dark = false }: { dark?: boolean }) {
   return (
     <Link
       to="/"
-      className="flex shrink-0 items-center gap-2.5 rounded-md"
+      className={`flex shrink-0 items-center rounded-md ${dark ? "bg-white px-3 py-2" : ""}`}
       aria-label="Canon Motors — home"
     >
-      <span className="grid h-9 w-9 place-items-center rounded-md bg-primary text-sm font-extrabold tracking-tight text-primary-foreground">
-        CM
-      </span>
-      <span
-        className={`${compact ? "hidden sm:inline" : ""} text-[17px] font-extrabold tracking-tight ${dark ? "text-graphite-foreground" : "text-foreground"}`}
-      >
-        CANON <span className="font-medium">MOTORS</span>
-      </span>
+      <img
+        src="/brand/canon-motors-logo.png"
+        alt="Canon Motors"
+        width={196}
+        height={67}
+        className={dark ? "h-11 w-auto" : "h-10 w-auto sm:h-12"}
+      />
     </Link>
   );
 }

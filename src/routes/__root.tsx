@@ -98,6 +98,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content: "Browse quality used Japanese vehicles from Canon Motors, Mombasa.",
       },
       { name: "theme-color", content: "#2a2522" },
+      { property: "og:image", content: "https://www.canonmotors.com/images/logo.png" },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Canon Motors" },
       { property: "og:locale", content: "en_KE" },
@@ -112,7 +113,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap",
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/favicon.ico", sizes: "any" },
+      { rel: "icon", href: "/brand/favicon-32.png", type: "image/png", sizes: "32x32" },
+      { rel: "apple-touch-icon", href: "/brand/apple-touch-icon.png" },
     ],
   }),
   shellComponent: RootShell,
@@ -153,7 +156,7 @@ function RootComponent() {
         <main id="main" className="flex-1" tabIndex={-1}>
           <Outlet />
         </main>
-        <SiteFooter makes={summary.makes} bodyTypes={summary.bodyTypes} />
+        <SiteFooter makes={summary.makes} bodyTypes={summary.bodyTypes} years={summary.years} />
       </div>
       <Toaster position="bottom-center" />
     </QueryClientProvider>

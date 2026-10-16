@@ -17,9 +17,9 @@ export const BUSINESS = {
    * Equity Bank" and "Moi Avenue, Bunju Road"). Both are shown until the
    * business confirms one canonical wording.
    */
-  street: "Moi Avenue",
+  street: "Moi Avenue, Bunju Road",
   directions:
-    "Our official listings describe the office as on Moi Avenue, behind Equity Bank (also given as Bunju Road). Please call ahead to confirm directions before visiting.",
+    "Our office is on Moi Avenue, Bunju Road; vehicle listings also describe it as behind Equity Bank. Please call ahead to confirm directions before visiting.",
   city: "Mombasa, Kenya",
   hours: [
     { days: "Monday – Friday", time: "8:30 a.m. – 6:00 p.m." },
