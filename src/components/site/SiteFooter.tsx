@@ -1,53 +1,144 @@
 import { Link } from "@tanstack/react-router";
+import { ShieldAlert } from "lucide-react";
 import { Logo } from "./SiteHeader";
-import { BUSINESS } from "@/lib/business";
-import { makes, bodyTypes } from "@/lib/inventory";
+import { BUSINESS, addressLines } from "@/lib/business";
+import type { Facet } from "@/lib/inventory";
 
-export function SiteFooter() {
+const linkCls = "hover:text-graphite-foreground hover:underline underline-offset-2";
+
+export function SiteFooter({ makes, bodyTypes }: { makes: Facet; bodyTypes: Facet }) {
   return (
     <footer className="bg-graphite text-graphite-muted">
-      <div className="container-page grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-5">
-        <div className="lg:col-span-2">
+      <div className="container-page grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr]">
+        <div>
           <Logo dark />
           <p className="mt-4 max-w-sm text-sm leading-relaxed">
-            Importer of quality used Japanese vehicles, serving buyers in Kenya and abroad from Mombasa.
+            Established in {BUSINESS.established}, Canon Motors imports used and new vehicles from
+            Japan, with its head office in Mombasa, Kenya.
           </p>
           <address className="mt-6 space-y-1 text-sm not-italic">
-            {BUSINESS.address.map((l) => <div key={l}>{l}</div>)}
-            <div className="pt-2"><a className="text-graphite-foreground hover:underline" href={BUSINESS.phoneHref}>{BUSINESS.phoneDisplay}</a></div>
-            <div><a className="text-graphite-foreground hover:underline" href={`mailto:${BUSINESS.email}`}>{BUSINESS.email}</a></div>
+            <div className="font-semibold text-graphite-foreground">{BUSINESS.name}</div>
+            {addressLines.map((l) => (
+              <div key={l}>{l}</div>
+            ))}
+            <div className="pt-2">
+              <a className={`text-graphite-foreground ${linkCls}`} href={BUSINESS.phoneHref}>
+                {BUSINESS.phoneDisplay}
+              </a>
+            </div>
+            <div>
+              <a
+                className={`text-graphite-foreground ${linkCls}`}
+                href={`mailto:${BUSINESS.email}`}
+              >
+                {BUSINESS.email}
+              </a>
+            </div>
           </address>
         </div>
-        <div>
-          <h3 className="text-sm font-semibold text-graphite-foreground">Popular makes</h3>
-          <ul className="mt-4 space-y-2 text-sm">
-            {makes().slice(0, 6).map(([m]) => (
-              <li key={m}><Link to="/vehicles" search={{ make: m }} className="hover:text-graphite-foreground">{m}</Link></li>
-            ))}
-          </ul>
-        </div>
-        <div>
-          <h3 className="text-sm font-semibold text-graphite-foreground">Categories</h3>
-          <ul className="mt-4 space-y-2 text-sm">
-            {bodyTypes().slice(0, 6).map(([b]) => (
-              <li key={b}><Link to="/vehicles" search={{ body: b }} className="hover:text-graphite-foreground">{b}</Link></li>
-            ))}
-          </ul>
-        </div>
-        <div>
-          <h3 className="text-sm font-semibold text-graphite-foreground">Company</h3>
-          <ul className="mt-4 space-y-2 text-sm">
-            <li><Link to="/vehicles" className="hover:text-graphite-foreground">Vehicle inventory</Link></li>
-            <li><Link to="/about" className="hover:text-graphite-foreground">About us</Link></li>
-            <li><Link to="/how-importing-works" className="hover:text-graphite-foreground">How importing works</Link></li>
-            <li><Link to="/contact" className="hover:text-graphite-foreground">Contact</Link></li>
-            <li><Link to="/favourites" className="hover:text-graphite-foreground">Favourites</Link></li>
-          </ul>
-        </div>
+        <FooterCol title="Popular makes">
+          {makes.slice(0, 6).map(({ value }) => (
+            <li key={value}>
+              <Link to="/vehicles" search={{ make: value }} className={linkCls}>
+                {value}
+              </Link>
+            </li>
+          ))}
+          <li>
+            <Link to="/makes" className={`font-semibold text-graphite-foreground ${linkCls}`}>
+              All makes
+            </Link>
+          </li>
+        </FooterCol>
+        <FooterCol title="Categories">
+          {bodyTypes.slice(0, 6).map(({ value }) => (
+            <li key={value}>
+              <Link to="/vehicles" search={{ body: value }} className={linkCls}>
+                {value}
+              </Link>
+            </li>
+          ))}
+          <li>
+            <Link to="/categories" className={`font-semibold text-graphite-foreground ${linkCls}`}>
+              All categories
+            </Link>
+          </li>
+        </FooterCol>
+        <FooterCol title="Company">
+          <li>
+            <Link to="/vehicles" className={linkCls}>
+              Vehicle inventory
+            </Link>
+          </li>
+          <li>
+            <Link to="/about" className={linkCls}>
+              About us
+            </Link>
+          </li>
+          <li>
+            <Link to="/how-importing-works" className={linkCls}>
+              How importing works
+            </Link>
+          </li>
+          <li>
+            <Link to="/contact" className={linkCls}>
+              Contact & FAQs
+            </Link>
+          </li>
+          <li>
+            <Link to="/favourites" className={linkCls}>
+              Saved vehicles
+            </Link>
+          </li>
+          <li>
+            <Link to="/compare" className={linkCls}>
+              Compare vehicles
+            </Link>
+          </li>
+        </FooterCol>
       </div>
-      <div className="border-t border-graphite-foreground/10">
-        <div className="container-page py-5 text-xs">© {new Date().getFullYear()} CANON MOTORS. All rights reserved.</div>
+      <div className="container-page">
+        <Link
+          to="/contact"
+          hash="payment-safety"
+          className="flex items-start gap-2 rounded-lg border border-graphite-foreground/10 p-4 text-sm hover:border-graphite-foreground/25"
+        >
+          <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-graphite-foreground" aria-hidden />
+          <span>
+            <span className="font-semibold text-graphite-foreground">Payment safety:</span> our only
+            website is canonmotors.com. Always confirm with us through the official contacts before
+            making any payment.
+          </span>
+        </Link>
+      </div>
+      <div className="mt-10 border-t border-graphite-foreground/10">
+        <div className="container-page flex flex-col gap-3 py-5 text-xs sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            © {new Date().getFullYear()} {BUSINESS.name} All rights reserved.
+          </p>
+          <ul className="flex gap-5">
+            <li>
+              <Link to="/privacy" className={linkCls}>
+                Privacy Policy
+              </Link>
+            </li>
+            <li>
+              <Link to="/terms" className={linkCls}>
+                Terms & Conditions
+              </Link>
+            </li>
+          </ul>
+        </div>
       </div>
     </footer>
+  );
+}
+
+function FooterCol({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <h2 className="text-sm font-semibold text-graphite-foreground">{title}</h2>
+      <ul className="mt-4 space-y-2 text-sm">{children}</ul>
+    </div>
   );
 }

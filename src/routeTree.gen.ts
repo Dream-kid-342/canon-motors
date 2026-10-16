@@ -12,10 +12,15 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as CategoriesRouteImport } from './routes/categories'
+import { Route as CompareRouteImport } from './routes/compare'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as FavouritesRouteImport } from './routes/favourites'
 import { Route as HowImportingWorksRouteImport } from './routes/how-importing-works'
 import { Route as MakesRouteImport } from './routes/makes'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as VehiclesIndexRouteImport } from './routes/vehicles.index'
 import { Route as VehiclesIdRouteImport } from './routes/vehicles.$id'
 
@@ -32,6 +37,11 @@ const AboutRoute = AboutRouteImport.update({
 const CategoriesRoute = CategoriesRouteImport.update({
   id: '/categories',
   path: '/categories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompareRoute = CompareRouteImport.update({
+  id: '/compare',
+  path: '/compare',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -54,6 +64,26 @@ const MakesRoute = MakesRouteImport.update({
   path: '/makes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VehiclesIndexRoute = VehiclesIndexRouteImport.update({
   id: '/vehicles/',
   path: '/vehicles/',
@@ -69,10 +99,15 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/categories': typeof CategoriesRoute
+  '/compare': typeof CompareRoute
   '/contact': typeof ContactRoute
   '/favourites': typeof FavouritesRoute
   '/how-importing-works': typeof HowImportingWorksRoute
   '/makes': typeof MakesRoute
+  '/privacy': typeof PrivacyRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
   '/vehicles/$id': typeof VehiclesIdRoute
   '/vehicles/': typeof VehiclesIndexRoute
 }
@@ -80,10 +115,15 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/categories': typeof CategoriesRoute
+  '/compare': typeof CompareRoute
   '/contact': typeof ContactRoute
   '/favourites': typeof FavouritesRoute
   '/how-importing-works': typeof HowImportingWorksRoute
   '/makes': typeof MakesRoute
+  '/privacy': typeof PrivacyRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
   '/vehicles/$id': typeof VehiclesIdRoute
   '/vehicles': typeof VehiclesIndexRoute
 }
@@ -92,10 +132,15 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/categories': typeof CategoriesRoute
+  '/compare': typeof CompareRoute
   '/contact': typeof ContactRoute
   '/favourites': typeof FavouritesRoute
   '/how-importing-works': typeof HowImportingWorksRoute
   '/makes': typeof MakesRoute
+  '/privacy': typeof PrivacyRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
   '/vehicles/$id': typeof VehiclesIdRoute
   '/vehicles/': typeof VehiclesIndexRoute
 }
@@ -105,10 +150,15 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/categories'
+    | '/compare'
     | '/contact'
     | '/favourites'
     | '/how-importing-works'
     | '/makes'
+    | '/privacy'
+    | '/robots.txt'
+    | '/sitemap.xml'
+    | '/terms'
     | '/vehicles/$id'
     | '/vehicles/'
   fileRoutesByTo: FileRoutesByTo
@@ -116,10 +166,15 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/categories'
+    | '/compare'
     | '/contact'
     | '/favourites'
     | '/how-importing-works'
     | '/makes'
+    | '/privacy'
+    | '/robots.txt'
+    | '/sitemap.xml'
+    | '/terms'
     | '/vehicles/$id'
     | '/vehicles'
   id:
@@ -127,10 +182,15 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/categories'
+    | '/compare'
     | '/contact'
     | '/favourites'
     | '/how-importing-works'
     | '/makes'
+    | '/privacy'
+    | '/robots.txt'
+    | '/sitemap.xml'
+    | '/terms'
     | '/vehicles/$id'
     | '/vehicles/'
   fileRoutesById: FileRoutesById
@@ -139,10 +199,15 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   CategoriesRoute: typeof CategoriesRoute
+  CompareRoute: typeof CompareRoute
   ContactRoute: typeof ContactRoute
   FavouritesRoute: typeof FavouritesRoute
   HowImportingWorksRoute: typeof HowImportingWorksRoute
   MakesRoute: typeof MakesRoute
+  PrivacyRoute: typeof PrivacyRoute
+  RobotsDottxtRoute: typeof RobotsDottxtRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TermsRoute: typeof TermsRoute
   VehiclesIdRoute: typeof VehiclesIdRoute
   VehiclesIndexRoute: typeof VehiclesIndexRoute
 }
@@ -168,6 +233,13 @@ declare module '@tanstack/react-router' {
       path: '/categories'
       fullPath: '/categories'
       preLoaderRoute: typeof CategoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compare': {
+      id: '/compare'
+      path: '/compare'
+      fullPath: '/compare'
+      preLoaderRoute: typeof CompareRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -198,6 +270,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MakesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/vehicles/': {
       id: '/vehicles/'
       path: '/vehicles'
@@ -219,10 +319,15 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   CategoriesRoute: CategoriesRoute,
+  CompareRoute: CompareRoute,
   ContactRoute: ContactRoute,
   FavouritesRoute: FavouritesRoute,
   HowImportingWorksRoute: HowImportingWorksRoute,
   MakesRoute: MakesRoute,
+  PrivacyRoute: PrivacyRoute,
+  RobotsDottxtRoute: RobotsDottxtRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TermsRoute: TermsRoute,
   VehiclesIdRoute: VehiclesIdRoute,
   VehiclesIndexRoute: VehiclesIndexRoute,
 }

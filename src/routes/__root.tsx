@@ -12,22 +12,31 @@ import { useEffect, type ReactNode } from "react";
 
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
+import { Toaster } from "@/components/ui/sonner";
+import { getCatalogSummary } from "@/lib/inventory.functions";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+    <div className="container-page flex min-h-[60vh] items-center justify-center py-16">
       <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+        <p className="eyebrow">Error 404</p>
+        <h1 className="mt-2 text-3xl font-extrabold text-foreground">Page not found</h1>
+        <p className="mt-3 text-muted-foreground">
+          The page you're looking for doesn't exist or has moved. If you followed a link to a
+          vehicle, it may no longer be listed.
         </p>
-        <div className="mt-6">
+        <div className="mt-6 flex flex-wrap justify-center gap-2">
+          <Link
+            to="/vehicles"
+            className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+          >
+            Browse vehicles
+          </Link>
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-semibold hover:bg-accent"
           >
             Go home
           </Link>
@@ -76,23 +85,33 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  loader: () => getCatalogSummary(),
+  // Catalogue summary (makes, categories) changes rarely; don't refetch on every navigation.
+  staleTime: 5 * 60_000,
   head: () => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Canon Motors — Japanese Vehicle Imports, Mombasa" },
-      { name: "description", content: "Browse quality used Japanese vehicles from Canon Motors, Mombasa." },
+      {
+        name: "description",
+        content: "Browse quality used Japanese vehicles from Canon Motors, Mombasa.",
+      },
+      { name: "theme-color", content: "#2a2522" },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "Canon Motors" },
+      { property: "og:locale", content: "en_KE" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
+      { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" },
+      { rel: "preconnect", href: "https://www.canonmotors.com" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap",
+      },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
     ],
   }),
@@ -104,7 +123,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en-KE">
       <head>
         <HeadContent />
       </head>
@@ -118,17 +137,25 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const summary = Route.useLoaderData();
 
   return (
     <QueryClientProvider client={queryClient}>
+      <a
+        href="#main"
+        className="sr-only z-50 rounded-md bg-primary px-4 py-2 font-semibold text-primary-foreground focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+      >
+        Skip to content
+      </a>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <div className="flex min-h-screen flex-col">
         <SiteHeader />
-        <main className="flex-1">
+        <main id="main" className="flex-1" tabIndex={-1}>
           <Outlet />
         </main>
-        <SiteFooter />
+        <SiteFooter makes={summary.makes} bodyTypes={summary.bodyTypes} />
       </div>
+      <Toaster position="bottom-center" />
     </QueryClientProvider>
   );
 }

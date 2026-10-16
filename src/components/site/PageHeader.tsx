@@ -1,24 +1,91 @@
 import { Link } from "@tanstack/react-router";
+import { ChevronRight } from "lucide-react";
 import type { ReactNode } from "react";
+import { SITE_URL } from "@/lib/business";
 
-export function PageHeader({ title, crumb, children }: { title: string; crumb: string; children?: ReactNode }) {
+export type Crumb = { label: string; to?: string; search?: Record<string, unknown> };
+
+export function Breadcrumbs({ items, className = "" }: { items: Crumb[]; className?: string }) {
+  const all: Crumb[] = [{ label: "Home", to: "/" }, ...items];
+  return (
+    <nav aria-label="Breadcrumb" className={className}>
+      <ol className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">
+        {all.map((c, i) => (
+          <li key={i} className="flex items-center gap-1">
+            {i > 0 && <ChevronRight className="h-3 w-3" aria-hidden />}
+            {c.to && i < all.length - 1 ? (
+              <Link
+                to={c.to}
+                search={c.search as never}
+                className="hover:text-foreground hover:underline"
+              >
+                {c.label}
+              </Link>
+            ) : (
+              <span
+                aria-current={i === all.length - 1 ? "page" : undefined}
+                className="text-foreground/80"
+              >
+                {c.label}
+              </span>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+  );
+}
+
+/** schema.org BreadcrumbList for the same trail. */
+export function breadcrumbJsonLd(items: Crumb[]) {
+  const all: Crumb[] = [{ label: "Home", to: "/" }, ...items];
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: all.map((c, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: c.label,
+      ...(c.to ? { item: `${SITE_URL}${c.to}` } : {}),
+    })),
+  };
+}
+
+export function PageHeader({
+  title,
+  crumbs,
+  children,
+  eyebrow,
+}: {
+  title: string;
+  crumbs: Crumb[];
+  children?: ReactNode;
+  eyebrow?: string;
+}) {
   return (
     <section className="border-b bg-secondary/60">
-      <div className="container-page py-8 md:py-10">
-        <nav aria-label="Breadcrumb" className="text-xs text-muted-foreground">
-          <Link to="/" className="hover:text-foreground">Home</Link> <span className="mx-1">/</span> <span>{crumb}</span>
-        </nav>
-        <h1 className="mt-2 text-3xl font-extrabold md:text-4xl">{title}</h1>
-        {children && <div className="mt-2 max-w-2xl text-muted-foreground">{children}</div>}
+      <div className="container-page py-8 md:py-12">
+        <Breadcrumbs items={crumbs} />
+        {eyebrow && <p className="eyebrow mt-5">{eyebrow}</p>}
+        <h1 className={`${eyebrow ? "mt-1" : "mt-4"} text-3xl font-extrabold md:text-4xl`}>
+          {title}
+        </h1>
+        {children && (
+          <div className="mt-3 max-w-2xl text-[15px] leading-relaxed text-muted-foreground">
+            {children}
+          </div>
+        )}
       </div>
     </section>
   );
 }
 
-export const STEPS = [
-  { t: "Choose a vehicle", d: "Browse our inventory or tell us what you need. Every listing has a reference number (e.g. CM-17364)." },
-  { t: "Enquire & get a quote", d: "Contact us by WhatsApp, phone or e-mail with the reference number to confirm price and availability." },
-  { t: "Confirm & pay securely", d: "Only make payments against invoices you have confirmed directly with Canon Motors through canonmotors.com contacts." },
-  { t: "Shipping from Japan", d: "Vehicles listed as \"In transit\" are already on their way. We keep you updated through the shipping process." },
-  { t: "Arrival in Mombasa", d: "Your vehicle arrives at Mombasa port. We guide you on the clearance and collection process." },
-];
+/** Render JSON-LD safely (escapes "<" so data cannot close the script tag). */
+export function JsonLd({ data }: { data: unknown }) {
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, "\u003c") }}
+    />
+  );
+}
